@@ -1,4 +1,6 @@
+import com.formdev.flatlaf.FlatLightLaf
 import helper.Arguments
+import ui.ToolsUI
 
 fun main(args: Array<String>) {
     parseArguments(args)
@@ -6,7 +8,12 @@ fun main(args: Array<String>) {
 
 fun parseArguments(args: Array<String>) {
     if (args.isEmpty()) {
-        TODO("GUI")
+        FlatLightLaf.setup()
+        ToolsUI().apply {
+            pack()
+            setLocationRelativeTo(null)
+            isVisible = true
+        }
     } else {
         val arguments = Arguments
 
