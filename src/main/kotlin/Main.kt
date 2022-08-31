@@ -1,12 +1,12 @@
 import com.formdev.flatlaf.FlatLightLaf
-import helper.Arguments
+import org.apache.commons.cli.*
 import ui.ToolsUI
 
 fun main(args: Array<String>) {
-    parseArguments(args)
+    parseArguments(args.toMutableList())
 }
 
-fun parseArguments(args: Array<String>) {
+fun parseArguments(args: MutableList<String>) {
     if (args.isEmpty()) {
         FlatLightLaf.setup()
         ToolsUI().apply {
@@ -15,28 +15,26 @@ fun parseArguments(args: Array<String>) {
             isVisible = true
         }
     } else {
-        val arguments = Arguments
+        val options = Options()
+        options.addOption("help", "print this message")
+        options.addOption(Option("r", "recursive", false, "recursive"))
+        options.addOption(Option("f", "force", false, "Don't ask for confirmation"))
+        options.addOption(Option("d", "directory", true, "Specify directory to use"))
+        options.addOption(Option("maxl", "maxlength", true, "Specify maximum length of song in seconds"))
 
-        var i = 0
-        while (i < args.size) {
-            when (args[i][0]) {
-                '-' -> {
-                    require(args[i].length >= 2) { "not a valid argument: " + args[i] }
-                    if (args[i][1] == '-') { // --opt
-                        require(args[i].length >= 3) { "not a valid argument: " + args[i] }
-                        TODO("no double args atm")
-                    } else {
-                        require(args[i].length - 1 != i) { "Expected argument after: " + args[i] }
-                        arguments.opts[args[i]] = args[i + 1]
-                        i++
-                    }
-                }
+        // first element: command => remove
+        val command: String = args.elementAt(0)
+        args.removeAt(0)
+        var cmd: CommandLine? = null
 
-                else -> arguments.args.add(args[i])
-            }
-            i++
+        try {
+            val parser: CommandLineParser = DefaultParser()
+            cmd = parser.parse(options, args.toTypedArray())
+        } catch (e: ParseException) {
+            displayHelp(options)
         }
-        runCommand(arguments.args.elementAt(0))
+
+        runCommand(command, options, cmd)
     }
 
 }

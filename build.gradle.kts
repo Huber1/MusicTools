@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation("net.jthink:jaudiotagger:3.0.1")
     implementation("com.formdev:flatlaf:2.4")
+    implementation("commons-cli:commons-cli:1.5.0")
     testImplementation(kotlin("test"))
 }
 
